@@ -1,10 +1,12 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 app.config.from_object('settings')
 db = SQLAlchemy(app)
 
-from blog import views
-from author import views
+
+from flask_blog.blog import views
+from flask_blog.author import views
+from flask_blog.author.models import Author
