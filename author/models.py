@@ -6,7 +6,7 @@ class Author(db.Model):
     fullname = db.Column(db.String(80))
     email = db.Column(db.String(35), unique=True)
     username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(60))
     is_author = db.Column(db.Boolean)
 
     def __init__(self, fullname, email, username, password, is_author=False):
@@ -18,3 +18,6 @@ class Author(db.Model):
 
     def __repr__(self):
         return '<Author %r>' % self.username
+
+    def self(self):
+        return self

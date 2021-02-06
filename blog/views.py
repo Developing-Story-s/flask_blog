@@ -3,19 +3,21 @@ from flask import render_template, redirect, flash, url_for
 from flask_blog.blog.form import SetupForm
 from flask_blog.author.models import Author
 from flask_blog.blog.models import Blog
-
+from flask_blog.author.decorators import login_required
+import bcrypt
 
 @app.route('/')
 @app.route('/index')
 def index():
+    blogs = Blog.query.count()
+    if blogs == 0:
+        return redirect(url_for('setup'))
     return "Hello World"
 
 
 @app.route('/admin')
+@login_required
 def admin():
-    blogs = Blog.query.count()
-    if blogs == 0:
-        return redirect(url_for('setup'))
     return render_template('blog/admin.html')
 
 
@@ -25,16 +27,17 @@ def setup():
     error = ''
 
     if form.validate_on_submit():
+        salt = bcrypt.gensalt()
+        h_pass = bcrypt.hashpw(form.password.data, salt)
         author = Author(
             form.fullname.data,
             form.email.data,
             form.username.data,
-            form.password.data,
+            h_pass,
             True
         )
         db.session.add(author)
         db.session.flush()
-
         if author.id:
             blog = Blog(
                 form.name.data,
@@ -48,6 +51,7 @@ def setup():
         if author.id and blog.id:
             db.session.flush()
             flash("Blog created")
+            db.session.commit()
             return redirect(url_for('admin'))
         else:
             db.session.rollback()

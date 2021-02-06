@@ -7,6 +7,7 @@ class Blog(db.Model):
     admin = db.Column(db.Integer, db.ForeignKey('author.id'))
 
     def __init__(self, name, admin):
+        print(self.id)
         self.name = name
         self.admin = admin
 
